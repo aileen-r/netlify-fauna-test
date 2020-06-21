@@ -3,13 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "bootstrap-db": "node ./scripts/bootstrap-db.js",
+    "serve": "npm run bootstrap-db && vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit"
+    "build:local": "vue-cli-service build",
+    "prebuild": "echo 'Check FaunaDB schemas' && npm run bootstrap-db",
+    "lint": "vue-cli-service lint --no-fix ",
+    "lint:--fix": "vue-cli-service lint --no-fix ",
+    "deploy:preview": "npm run build:local && netlify deploy",
+    "deploy:prod": "npm run build:local && netlify deploy --prod ",
+    "test:unit": "vue-cli-service test:unit",
+    "test:unit--watch": "vue-cli-service test:unit --watch",
+    "start": "netlify dev"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "core-js": "^3.6.5",
     "faunadb": "^2.14.2",
+    "generate-password": "^1.5.1",
     "gotrue-js": "^0.9.25",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
