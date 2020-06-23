@@ -33,7 +33,7 @@ export default {
       font-family: 'Rancho', cursive;
       font-size: 3em;
       font-weight: bold;
-      margin-bottom: 0.3em;
+      margin-bottom: 0.4em;
     }
   }
 }
