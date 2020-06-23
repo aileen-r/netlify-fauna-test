@@ -1,33 +1,26 @@
 <template>
-  <footer>
-    made by<a href="https://twitter.com/chiubaca">chiubaca</a>
-    <div id="links"></div>
-  </footer>
+  <div class="footer">
+    <p>&copy; {{ new Date().getFullYear() }} Aileen Rae</p>
+  </div>
 </template>
 
 <script>
-export default {};
+export default {
+  name: 'Footer',
+};
 </script>
 
 <style lang="scss" scoped>
-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  right: 0;
+.footer {
   bottom: 0;
-  height: 35px;
+  font-size: small;
+  padding: $gutter-width;
+  position: absolute;
   text-align: center;
-  color: black;
-  background-color: var(--app-secondary-background-color);
-  a {
-    text-decoration: none;
-    margin-left: 5px;
-    border-bottom: 2px solid lightskyblue;
-  }
-  a:hover {
-    border-radius: 5px;
-    background-color: lightskyblue;
+  width: 100%;
+
+  p {
+    margin-bottom: 0;
   }
 }
 </style>

@@ -1,21 +1,21 @@
 <template>
   <div class="app-background">
-    <NavBar />
+    <OldNavBar />
 
     <slot />
 
-    <Footer />
+    <OldFooter />
   </div>
 </template>
 
 <script>
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+import OldNavBar from '../components/OldNavBar';
+import OldFooter from '../components/OldFooter';
 export default {
   name: 'OldLayout',
   components: {
-    NavBar,
-    Footer,
+    OldNavBar,
+    OldFooter,
   },
 };
 </script>

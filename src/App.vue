@@ -16,8 +16,8 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+// Legacy -----------------------------------------
 .app-background {
   display: flex;
   min-height: 100vh;

@@ -5,11 +5,11 @@ import store from './store';
 import attemptToAuthoriseTokens from './helpers/authorise-tokens';
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-
 import Default from './layouts/Default';
 import Old from './layouts/Old';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 Vue.component('default-layout', Default);
 Vue.component('old-layout', Old);
