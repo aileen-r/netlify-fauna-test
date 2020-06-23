@@ -1,7 +1,7 @@
 <template>
   <nav v-if="currentUser" id="nav-bar">
     <div id="nav-items">
-      <router-link :to="{ name: 'home' }">🏠 Home</router-link>
+      <router-link :to="{ name: 'oldHome' }">🏠 Home</router-link>
 
       <router-link :to="{ name: 'journals' }">📔 Your Journals</router-link>
 

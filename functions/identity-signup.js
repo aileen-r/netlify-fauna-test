@@ -90,7 +90,7 @@ function handler(event, context, callback) {
       });
     })
     .catch((e) => {
-      console.error('Somethings gone wrong ', e);
+      console.error("Something's gone wrong ", e);
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({ error: e }),

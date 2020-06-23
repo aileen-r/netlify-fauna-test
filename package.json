@@ -17,6 +17,7 @@
     "start": "netlify dev"
   },
   "dependencies": {
+    "bootstrap-vue": "^2.15.0",
     "chalk": "^4.1.0",
     "core-js": "^3.6.5",
     "faunadb": "^2.14.2",
