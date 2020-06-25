@@ -1,14 +1,14 @@
 <template>
   <div class="nav-bar">
     <div>Navigation will go here...</div>
-    <b-dropdown v-if="currentUser">
+    <b-dropdown v-if="currentUser" right>
       <template v-slot:button-content>
         <b-avatar :text="initials" variant="primary" />{{ currentUserDisplayName }}
       </template>
       <b-dropdown-item disabled>Settings</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
     </b-dropdown>
-    <b-button v-else disabled variant="link">Log In</b-button>
+    <b-button v-else to="/login" variant="link">Log In</b-button>
   </div>
 </template>
 
