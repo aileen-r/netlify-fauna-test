@@ -1,11 +1,14 @@
 <template>
   <div>
     <h1>Log In</h1>
+    <b-alert variant="danger" :show="loginError"
+      >Oops, something went wrong! Please try again.</b-alert
+    >
     <b-form novalidate @submit="login">
       <b-form-group label="Email address" label-for="login-email">
         <b-form-input
           id="login-email"
-          v-model.trim="$v.email.$model"
+          v-model.trim="$v.form.email.$model"
           :state="getFieldState('email')"
           type="email"
           required
@@ -18,7 +21,7 @@
       <b-form-group label="Password" label-for="login-password">
         <b-form-input
           id="login-password"
-          v-model.trim="$v.password.$model"
+          v-model.trim="$v.form.password.$model"
           :state="getFieldState('password')"
           type="password"
           required
@@ -35,6 +38,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import { validationMixin } from 'vuelidate';
 import { required } from 'vuelidate/lib/validators';
 
@@ -45,20 +49,37 @@ export default {
   mixins: [validationMixin, formMixin],
   data() {
     return {
-      email: '',
-      password: '',
+      form: {
+        email: '',
+        password: '',
+      },
+      loginError: false,
     };
   },
   validations: {
-    email: { required },
-    password: { required },
+    form: {
+      email: { required },
+      password: { required },
+    },
   },
   methods: {
+    ...mapActions('auth', ['attemptLogin']),
+
     login(e) {
       e.preventDefault();
-      this.$v.$touch();
-      if (this.$v.$invalid) return;
-      console.log('login');
+      this.loginError = false;
+      this.$v.form.$touch();
+      if (this.$v.form.$invalid) return;
+      this.attemptLogin({ email: this.form.email, password: this.form.password })
+        .then(() => {
+          this.$router.push('/');
+        })
+        .catch((error) => {
+          // TODO - parse out response errors
+          this.loginError = true;
+          // eslint-disable-next-line no-console
+          console.error(error, 'Login failed');
+        });
     },
   },
 };
