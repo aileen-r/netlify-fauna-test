@@ -194,17 +194,17 @@ export default {
      */
     attemptLogout({ state, commit }) {
       return new Promise((resolve, reject) => {
-        state.GoTrueAuth.currentUser()
+        // calling .currentUser() mutates the GoTrueAuth object
+        const goTrueAuth = state.GoTrueAuth;
+        commit('SET_CURRENT_USER', null);
+        goTrueAuth
+          .currentUser()
           .logout()
           .then((resp) => {
-            console.log('User logged out', resp);
-            alert('you have logged out');
-            commit('SET_CURRENT_USER', null);
+            console.log('User logged out');
             resolve(resp);
           })
           .catch((error) => {
-            console.error('Could not log user out', error);
-            commit('SET_CURRENT_USER', null);
             reject(error);
           });
       });

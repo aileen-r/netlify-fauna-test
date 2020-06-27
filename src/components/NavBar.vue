@@ -34,13 +34,12 @@ export default {
     ...mapActions('auth', ['attemptLogout']),
     logout() {
       this.attemptLogout()
-        .then((resp) => {
+        .then(() => {
           this.$router.push('/');
-          console.log('logged out', resp);
         })
         .catch((error) => {
-          alert('problem with logout');
           location.reload();
+          // eslint-disable-next-line no-console
           console.error('problem with logout', error);
         });
     },
