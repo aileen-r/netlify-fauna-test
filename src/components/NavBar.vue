@@ -1,9 +1,10 @@
 <template>
   <div class="nav-bar">
     <div>Navigation will go here...</div>
-    <b-dropdown v-if="currentUser" right>
+    <b-dropdown v-if="currentUser" right variant="link">
       <template v-slot:button-content>
-        <b-avatar :text="initials" variant="primary" />{{ currentUserDisplayName }}
+        <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
+        >{{ currentUserDisplayName }}
       </template>
       <b-dropdown-item disabled>Settings</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
@@ -55,5 +56,9 @@ export default {
   padding: $gutter-width;
   position: relative;
   z-index: 1;
+
+  .avatar {
+    margin-right: 10px;
+  }
 }
 </style>

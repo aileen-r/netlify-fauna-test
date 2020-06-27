@@ -86,7 +86,6 @@ export default {
             commit('SET_CURRENT_USER', response);
           })
           .catch((error) => {
-            console.log('An error occurred signing up', error);
             reject(error);
           });
       });

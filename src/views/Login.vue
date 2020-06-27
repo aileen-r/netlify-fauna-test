@@ -1,15 +1,13 @@
 <template>
   <div>
     <h1>Log In</h1>
-    <b-alert variant="danger" :show="loginError"
-      >Oops, something went wrong! Please try again.</b-alert
-    >
+    <b-alert variant="danger" :show="!!loginError">{{ loginError }}</b-alert>
     <b-form novalidate @submit="login">
       <b-form-group label="Email address" label-for="login-email">
         <b-form-input
           id="login-email"
           v-model.trim="$v.form.email.$model"
-          :state="getFieldState('email')"
+          :state="getFieldState('email') === true ? null : getFieldState('email')"
           type="email"
           required
           placeholder="your-name@site.com"
@@ -22,7 +20,7 @@
         <b-form-input
           id="login-password"
           v-model.trim="$v.form.password.$model"
-          :state="getFieldState('password')"
+          :state="getFieldState('password') === true ? null : getFieldState('password')"
           type="password"
           required
           placeholder="●●●●●●●●"
@@ -53,7 +51,7 @@ export default {
         email: '',
         password: '',
       },
-      loginError: false,
+      loginError: '',
     };
   },
   validations: {
@@ -67,7 +65,7 @@ export default {
 
     login(e) {
       e.preventDefault();
-      this.loginError = false;
+      this.loginError = '';
       this.$v.form.$touch();
       if (this.$v.form.$invalid) return;
       this.attemptLogin({ email: this.form.email, password: this.form.password })
@@ -75,8 +73,25 @@ export default {
           this.$router.push('/');
         })
         .catch((error) => {
-          // TODO - parse out response errors
-          this.loginError = true;
+          // Wrapping in try/catch since I'm guessing at error response structure
+          try {
+            if (error.data) {
+              this.loginError = error.data;
+            }
+            if (error.json) {
+              if (error.json.error === 'invalid_grant') {
+                this.loginError = 'Invalid email address or password';
+              } else {
+                this.loginError = error.json['error_description'];
+              }
+            }
+          } catch (err) {
+            console.error(err, 'Login handling error');
+          }
+
+          if (!this.loginError) {
+            this.loginError = 'Oops, something went wrong. Please try again.';
+          }
           // eslint-disable-next-line no-console
           console.error(error, 'Login failed');
         });
