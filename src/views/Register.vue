@@ -13,6 +13,9 @@
               type="text"
               placeholder="John"
             />
+            <b-form-invalid-feedback :state="getFieldState('firstName')">
+              Required
+            </b-form-invalid-feedback>
           </b-form-group>
         </b-col>
         <b-col>
@@ -24,6 +27,9 @@
               type="text"
               placeholder="Boyega"
             />
+            <b-form-invalid-feedback :state="getFieldState('surname')">
+              Required
+            </b-form-invalid-feedback>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -35,6 +41,9 @@
           type="email"
           placeholder="your-name@site.com"
         />
+        <b-form-invalid-feedback :state="getFieldState('email')">
+          {{ !$v.email.email ? 'Please enter a valid email address' : 'Required' }}
+        </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group label="Password" label-for="login-password">
         <b-form-input
@@ -44,6 +53,9 @@
           type="password"
           placeholder="●●●●●●●●"
         />
+        <b-form-invalid-feedback :state="getFieldState('password')">
+          {{ passwordErrorMessage }}
+        </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group label="Confirm Your Password" label-for="login-password-confirm">
         <b-form-input
@@ -53,6 +65,9 @@
           type="password"
           placeholder="●●●●●●●●"
         />
+        <b-form-invalid-feedback :state="getFieldState('passwordConfirm')">
+          {{ !$v.passwordConfirm.sameAsPassword ? 'Password does not match' : 'Required' }}
+        </b-form-invalid-feedback>
       </b-form-group>
       <b-button type="submit" variant="primary">Sign Me Up</b-button>
     </b-form>
@@ -62,11 +77,18 @@
 
 <script>
 import { validationMixin } from 'vuelidate';
-import { required } from 'vuelidate/lib/validators';
+import { email, required, sameAs } from 'vuelidate/lib/validators';
+
+// Password validators
+const containsLowercase = (val) => /(?=.*[a-z])/.test(val);
+const containsUppercase = (val) => /(?=.*[a-z])/.test(val);
+const containsNumeric = (val) => /(?=.*\d)/.test(val);
 
 export default {
   name: 'Register',
+
   mixins: [validationMixin],
+
   data() {
     return {
       firstName: '',
@@ -76,6 +98,7 @@ export default {
       passwordConfirm: '',
     };
   },
+
   validations: {
     firstName: {
       required,
@@ -85,52 +108,46 @@ export default {
     },
     email: {
       required,
+      email,
     },
     password: {
       required,
+      containsLowercase,
+      containsUppercase,
+      containsNumeric,
     },
     passwordConfirm: {
       required,
+      sameAsPassword: sameAs('password'),
     },
   },
+
+  computed: {
+    passwordErrorMessage() {
+      if (!this.$v.password.required) return 'Required';
+      if (!this.$v.password.containsLowercase) {
+        return 'Your password should contain at least one lowercase letter';
+      }
+      if (!this.$v.password.containsUppercase) {
+        return 'Your password should contain at least one uppercase letter';
+      }
+      if (!this.$v.password.containsNumber) {
+        return 'Your password should contain at least one number';
+      }
+      return '';
+    },
+  },
+
   methods: {
     getFieldState(field) {
       return this.$v[field].$dirty ? !this.$v[field].$invalid : null;
     },
+
     register(e) {
       e.preventDefault();
       this.$v.$touch();
       if (this.$v.$invalid) return;
       console.log('register');
-    },
-    validate(field) {
-      if (!this.touched[field]) return { valid: null };
-      if (this[field] === '') return { valid: false, message: 'Required' };
-      const password = this.password;
-      switch (field) {
-        case 'email':
-          if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
-            return { valid: false, message: 'Please enter a valid email address' };
-          }
-        // fall through
-        case 'password':
-          if (password.length < 8) {
-            return 'Your password must be at least 8 characters long.';
-          }
-          if (!/[A-Z]/.test(password)) {
-            return 'Your password must contain at least one uppercase letter.';
-          }
-          if (!/[a-z]/.test(password)) {
-            return 'Your password must contain at least one lowercase letter.';
-          }
-          if (!/\d/.test(password)) {
-            return 'Your password must contain at least one numeric value.';
-          }
-        // fall through
-        default:
-          console.log('default');
-          return { valid: true };
-      }
     },
   },
 };
