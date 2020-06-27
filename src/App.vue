@@ -1,26 +1,23 @@
 <template>
-  <div class="app-background">
-    <NavBar />
-
+  <component :is="layout">
     <router-view />
-
-    <Footer />
-  </div>
+  </component>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue';
-import Footer from './components/Footer.vue';
+const defaultLayout = 'default';
 export default {
-  components: {
-    NavBar,
-    Footer,
+  name: 'App',
+  computed: {
+    layout() {
+      return (this.$route.meta.layout || defaultLayout) + '-layout';
+    },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+// Legacy -----------------------------------------
 .app-background {
   display: flex;
   min-height: 100vh;

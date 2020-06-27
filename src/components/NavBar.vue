@@ -1,58 +1,59 @@
 <template>
-  <nav v-if="currentUser" id="nav-bar">
-    <div id="nav-items">
-      <router-link :to="{ name: 'home' }">🏠 Home</router-link>
-
-      <router-link :to="{ name: 'journals' }">📔 Your Journals</router-link>
-
-      <router-link id="profile-link" :to="{ name: 'profile' }">🆔 Profile</router-link>
-
-      <ThemeToggle />
-    </div>
-  </nav>
+  <div class="nav-bar">
+    <div>Navigation will go here...</div>
+    <b-dropdown v-if="currentUser" right>
+      <template v-slot:button-content>
+        <b-avatar :text="initials" variant="primary" />{{ currentUserDisplayName }}
+      </template>
+      <b-dropdown-item disabled>Settings</b-dropdown-item>
+      <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
+    </b-dropdown>
+    <b-button v-else to="/login" variant="link">Log In</b-button>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import ThemeToggle from './ThemeToggle.vue';
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
-  components: {
-    ThemeToggle,
-  },
+  name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser']),
+    ...mapGetters('auth', ['currentUser', 'currentUserDisplayName']),
+    initials() {
+      return (
+        this.currentUserDisplayName &&
+        this.currentUserDisplayName
+          .split(' ')
+          .map((x) => x[0].toUpperCase())
+          .join('')
+      );
+    },
+  },
+  methods: {
+    ...mapActions('auth', ['attemptLogout']),
+    logout() {
+      this.attemptLogout()
+        .then((resp) => {
+          this.$router.push('/');
+          console.log('logged out', resp);
+        })
+        .catch((error) => {
+          alert('problem with logout');
+          location.reload();
+          console.error('problem with logout', error);
+        });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-nav#nav-bar {
-  background-color: var(--app-secondary-background-color);
-}
-nav#nav-bar #nav-items {
-  display: flex;
-  flex-flow: wrap;
-  text-decoration: none;
+.nav-bar {
   align-items: center;
-  text-align: center;
-  justify-content: space-evenly;
-  margin: 30px 10px 0 10px;
-  a {
-    border-bottom: solid 3px rgba(255, 255, 255, 0);
-    padding-bottom: 5px;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  a:hover {
-    border-bottom: solid 3px var(--primary);
-    padding-bottom: 5px;
-  }
-  a#profile-link {
-    text-transform: capitalize;
-  }
-}
-nav#nav-bar #nav-items > a,
-div {
-  margin: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding: $gutter-width;
+  position: relative;
+  z-index: 1;
 }
 </style>

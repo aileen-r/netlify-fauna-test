@@ -18,6 +18,9 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
+    currentUserDisplayName: (state) =>
+      state.currentUser && state.currentUser.user_metadata.full_name,
+
     netlifyUserLoggedIn: (state) => !!state.GoTrueAuth.currentUser(),
 
     currentNetlifyUser: (state) => state.GoTrueAuth.currentUser(),
