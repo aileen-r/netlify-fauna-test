@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- TODO: write some more interesting flavour text here -->
+    <!-- TODO: write some more interesting flavour text here (see reddit) -->
     <h1>Register for an account</h1>
     <b-form novalidate @submit="register">
       <b-form-row>
@@ -79,6 +79,8 @@
 import { validationMixin } from 'vuelidate';
 import { email, required, sameAs } from 'vuelidate/lib/validators';
 
+import formMixin from '@/mixins/formMixin';
+
 // Password validators
 const containsLowercase = (val) => /(?=.*[a-z])/.test(val);
 const containsUppercase = (val) => /(?=.*[a-z])/.test(val);
@@ -87,7 +89,7 @@ const containsNumeric = (val) => /(?=.*\d)/.test(val);
 export default {
   name: 'Register',
 
-  mixins: [validationMixin],
+  mixins: [validationMixin, formMixin],
 
   data() {
     return {
@@ -139,10 +141,6 @@ export default {
   },
 
   methods: {
-    getFieldState(field) {
-      return this.$v[field].$dirty ? !this.$v[field].$invalid : null;
-    },
-
     register(e) {
       e.preventDefault();
       this.$v.$touch();
