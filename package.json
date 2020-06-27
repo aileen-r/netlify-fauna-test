@@ -13,7 +13,7 @@
     "deploy:preview": "npm run build:local && netlify deploy",
     "deploy:prod": "npm run build:local && netlify deploy --prod ",
     "test:unit": "vue-cli-service test:unit",
-    "test:unit--watch": "vue-cli-service test:unit --watch",
+    "test:unit:watch": "vue-cli-service test:unit --watch",
     "start": "netlify dev"
   },
   "dependencies": {
