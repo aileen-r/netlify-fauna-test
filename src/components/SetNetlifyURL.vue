@@ -25,11 +25,11 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('app', ['isDevEnvironment', 'siteURL']),
+    ...mapGetters('env', ['isDevEnvironment', 'siteURL']),
   },
   methods: {
     setURL() {
-      this.$store.commit('app/SET_SITE_URL', this.netlifyURL);
+      this.$store.commit('env/SET_SITE_URL', this.netlifyURL);
     },
   },
 };

@@ -6,7 +6,7 @@
 const formMixin = {
   methods: {
     getFieldState(field) {
-      return this.$v[field].$dirty ? !this.$v[field].$invalid : null;
+      return this.$v.form[field].$dirty ? !this.$v.form[field].$invalid : null;
     },
   },
 };

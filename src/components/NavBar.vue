@@ -1,14 +1,17 @@
 <template>
   <div class="nav-bar">
     <div>Navigation will go here...</div>
-    <b-dropdown v-if="currentUser" right>
+    <b-dropdown v-if="currentUser" right variant="link">
       <template v-slot:button-content>
-        <b-avatar :text="initials" variant="primary" />{{ currentUserDisplayName }}
+        <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
+        >{{ currentUserDisplayName }}
       </template>
       <b-dropdown-item disabled>Settings</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
     </b-dropdown>
-    <b-button v-else to="/login" variant="link">Log In</b-button>
+    <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
+      >Log In</b-button
+    >
   </div>
 </template>
 
@@ -30,17 +33,21 @@ export default {
     },
   },
   methods: {
+    ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['attemptLogout']),
     logout() {
+      this.setLoading(true);
       this.attemptLogout()
-        .then((resp) => {
+        .then(() => {
           this.$router.push('/');
-          console.log('logged out', resp);
         })
         .catch((error) => {
-          alert('problem with logout');
           location.reload();
+          // eslint-disable-next-line no-console
           console.error('problem with logout', error);
+        })
+        .finally(() => {
+          this.setLoading(false);
         });
     },
   },
@@ -55,5 +62,9 @@ export default {
   padding: $gutter-width;
   position: relative;
   z-index: 1;
+
+  .avatar {
+    margin-right: 10px;
+  }
 }
 </style>

@@ -1,14 +1,26 @@
 <template>
-  <component :is="layout">
-    <router-view />
-  </component>
+  <div>
+    <component :is="layout">
+      <router-view />
+    </component>
+    <Loading v-if="loading" />
+  </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import Loading from '@/components/Loading';
+
 const defaultLayout = 'default';
+
 export default {
   name: 'App',
+  components: {
+    Loading,
+  },
   computed: {
+    ...mapState('app', ['loading']),
+
     layout() {
       return (this.$route.meta.layout || defaultLayout) + '-layout';
     },
