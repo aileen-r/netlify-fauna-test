@@ -61,6 +61,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['attemptLogin']),
 
     login(e) {
@@ -68,6 +69,7 @@ export default {
       this.loginError = '';
       this.$v.form.$touch();
       if (this.$v.form.$invalid) return;
+      this.setLoading(true);
       this.attemptLogin({ email: this.form.email, password: this.form.password })
         .then(() => {
           this.$router.push('/');
@@ -94,6 +96,9 @@ export default {
           }
           // eslint-disable-next-line no-console
           console.error(error, 'Login failed');
+        })
+        .finally(() => {
+          this.setLoading(false);
         });
     },
   },

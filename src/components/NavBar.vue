@@ -9,7 +9,9 @@
       <b-dropdown-item disabled>Settings</b-dropdown-item>
       <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
     </b-dropdown>
-    <b-button v-else to="/login" variant="link">Log In</b-button>
+    <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
+      >Log In</b-button
+    >
   </div>
 </template>
 

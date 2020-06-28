@@ -83,10 +83,11 @@ import { validationMixin } from 'vuelidate';
 import { email, required, sameAs } from 'vuelidate/lib/validators';
 
 import formMixin from '@/mixins/formMixin';
+import { mapActions } from 'vuex';
 
 // Password validators
 const containsLowercase = (val) => /(?=.*[a-z])/.test(val);
-const containsUppercase = (val) => /(?=.*[a-z])/.test(val);
+const containsUppercase = (val) => /(?=.*[A-Z])/.test(val);
 const containsNumeric = (val) => /(?=.*\d)/.test(val);
 
 export default {
@@ -149,11 +150,14 @@ export default {
   },
 
   methods: {
+    ...mapActions('app', ['setLoading']),
+
     register(e) {
       e.preventDefault();
       this.registerError = false;
       this.$v.form.$touch();
       if (this.$v.form.$invalid) return;
+      this.setLoading(true);
       this.attemptSignup(this.crendentials)
         .then((response) => {
           // TODO
@@ -163,6 +167,9 @@ export default {
           this.registerError = true;
           // eslint-disable-next-line no-console
           console.error(error, 'Register error');
+        })
+        .finally(() => {
+          this.setLoading(false);
         });
     },
   },

@@ -237,7 +237,7 @@ export default {
 
     /**
      * Initialises a GoTrue instance. This method also checks if user is in a local environment  based on the URL.
-     * this updates the `app/SET_DEV_ENV` flag. This facilitates a zero-config setup as a developer can input their
+     * this updates the `env/SET_DEV_ENV` flag. This facilitates a zero-config setup as a developer can input their
      * netlify URL in the UI (see the the `SetNetlifyURL.vue` component). Inspired from the official Netlify
      * Identity widget.
      * @param {*} store - vuex store object
@@ -260,23 +260,23 @@ export default {
       // TODO : Move this logic into a separate action.
       if (hostName.match(IPv4Pattern) || hostName === 'localhost') {
         console.log('Looks like your in a dev environment', hostName);
-        commit('app/SET_DEV_ENV', true, { root: true });
+        commit('env/SET_DEV_ENV', true, { root: true });
 
         console.log(
           'Initialising Go True client with',
-          `https://${rootGetters['app/siteURL']}/.netlify/identity`
+          `https://${rootGetters['env/siteURL']}/.netlify/identity`
         );
         commit(
           'SET_GOTRUE',
-          initNewGoTrue(`https://${rootGetters['app/siteURL']}/.netlify/identity`)
+          initNewGoTrue(`https://${rootGetters['env/siteURL']}/.netlify/identity`)
         );
 
         this.subscribe((mutation) => {
-          if (mutation.type === 'app/SET_SITE_URL') {
-            console.log('Re-initialising Go True client with', rootGetters['app/siteURL']);
+          if (mutation.type === 'env/SET_SITE_URL') {
+            console.log('Re-initialising Go True client with', rootGetters['env/siteURL']);
             commit(
               'SET_GOTRUE',
-              initNewGoTrue(`https://${rootGetters['app/siteURL']}/.netlify/identity`)
+              initNewGoTrue(`https://${rootGetters['env/siteURL']}/.netlify/identity`)
             );
           }
         });
