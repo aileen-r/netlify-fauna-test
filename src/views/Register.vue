@@ -156,6 +156,7 @@ export default {
 
   methods: {
     ...mapActions('app', ['setLoading']),
+    ...mapActions('auth', ['attemptSignup']),
 
     register(e) {
       e.preventDefault();
@@ -163,7 +164,7 @@ export default {
       this.$v.form.$touch();
       if (this.$v.form.$invalid) return;
       this.setLoading(true);
-      this.attemptSignup(this.crendentials)
+      this.attemptSignup(this.form)
         .then((response) => {
           // TODO
           console.log(response);

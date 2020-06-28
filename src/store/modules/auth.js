@@ -153,7 +153,8 @@ export default {
       console.log(`Attempting signup for ${credentials.email}...`, credentials);
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.signup(credentials.email, credentials.password, {
-          full_name: credentials.name,
+          first_name: credentials.firstName,
+          surname: credentials.surname,
         })
           .then((response) => {
             console.log(`Confirmation email sent`, response);
