@@ -14,11 +14,13 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('../views/Login'),
+    meta: { unauthOnly: true },
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('../views/Register'),
+    meta: { unauthOnly: true },
   },
   {
     path: '/',
@@ -65,16 +67,19 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.authRequired);
-  // If the route doesnt have a `meta.authRequired` property go on ahead!
+  const unauthOnly = to.matched.some(route => route.meta.unauthOnly);
+  const loggedIn = store.getters['auth/loggedIn'];
+
+  if (unauthOnly && loggedIn) {
+    return next({ name: 'home', query: { redirectFrom: to.fullPath } });
+  }
   if (!authRequired) {
     return next();
   }
-  // If we go this far then it must have the `meta.authRequired`. But is there is a user logged in? If so, then go right on ahead!
-  if (store.getters['auth/loggedIn']) {
+  if (loggedIn) {
     return next();
   }
-  // The page requested is both secured and there is no logged in user detected. Sorry mate. No entry!
-  console.warn('Page restricted, you need to login');
+  console.warn('Page restricted. You need to login');
   next({ name: 'home', query: { redirectFrom: to.fullPath } });
 });
 
