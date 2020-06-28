@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- TODO: write some more interesting flavour text here (see reddit) -->
-    <h1>Register for an account</h1>
+    <h2>Register for an account</h2>
     <b-alert variant="danger" :show="registerError"
       >Oops, something went wrong! Please try again.</b-alert
     >
@@ -165,9 +165,10 @@ export default {
       if (this.$v.form.$invalid) return;
       this.setLoading(true);
       this.attemptSignup(this.form)
-        .then((response) => {
-          // TODO
-          console.log(response);
+        .then((res) => {
+          console.log(res.email);
+          const emailUri = encodeURIComponent(res.email);
+          this.$router.push(`/register/success?email=${emailUri}`);
         })
         .catch((error) => {
           this.registerError = true;
