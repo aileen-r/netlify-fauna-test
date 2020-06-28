@@ -33,8 +33,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['attemptLogout']),
     logout() {
+      this.setLoading(true);
       this.attemptLogout()
         .then(() => {
           this.$router.push('/');
@@ -43,6 +45,9 @@ export default {
           location.reload();
           // eslint-disable-next-line no-console
           console.error('problem with logout', error);
+        })
+        .finally(() => {
+          this.setLoading(false);
         });
     },
   },
