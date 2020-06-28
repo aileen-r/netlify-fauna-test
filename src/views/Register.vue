@@ -11,6 +11,7 @@
           <b-form-group label="First Name" label-for="login-first-name">
             <b-form-input
               id="login-first-name"
+              ref="firstName"
               v-model.trim="$v.form.firstName.$model"
               :state="getFieldState('firstName')"
               type="text"
@@ -149,6 +150,10 @@ export default {
     },
   },
 
+  mounted() {
+    this.$refs.firstName.$el.focus();
+  },
+
   methods: {
     ...mapActions('app', ['setLoading']),
 
@@ -175,5 +180,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

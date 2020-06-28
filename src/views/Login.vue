@@ -6,6 +6,7 @@
       <b-form-group label="Email address" label-for="login-email">
         <b-form-input
           id="login-email"
+          ref="email"
           v-model.trim="$v.form.email.$model"
           :state="getFieldState('email') === true ? null : getFieldState('email')"
           type="email"
@@ -54,12 +55,18 @@ export default {
       loginError: '',
     };
   },
+
   validations: {
     form: {
       email: { required },
       password: { required },
     },
   },
+
+  mounted() {
+    this.$refs.email.$el.focus();
+  },
+
   methods: {
     ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['attemptLogin']),
@@ -104,5 +111,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
