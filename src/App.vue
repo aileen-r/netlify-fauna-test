@@ -60,6 +60,7 @@ export default {
         element.style.height = height;
       });
     },
+
     afterEnter(element) {
       element.style.height = 'auto';
     },

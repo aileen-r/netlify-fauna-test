@@ -1,17 +1,23 @@
 <template>
   <div class="nav-bar">
-    <div>Navigation will go here...</div>
-    <b-dropdown v-if="currentUser" right variant="link">
-      <template v-slot:button-content>
-        <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
-        >{{ currentUserDisplayName }}
-      </template>
-      <b-dropdown-item disabled>Settings</b-dropdown-item>
-      <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
-    </b-dropdown>
-    <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
-      >Log In</b-button
-    >
+    <transition name="fade" mode="out-in">
+      <b-link v-if="$route.path !== '/'" to="/">
+        <h1 class="title">52 Week Savings Challenge</h1>
+      </b-link>
+    </transition>
+    <div class="user-dropdown">
+      <b-dropdown v-if="currentUser" right variant="link">
+        <template v-slot:button-content>
+          <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
+          >{{ currentUserDisplayName }}
+        </template>
+        <b-dropdown-item disabled>Settings</b-dropdown-item>
+        <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
+      </b-dropdown>
+      <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
+        >Log In</b-button
+      >
+    </div>
   </div>
 </template>
 
@@ -58,13 +64,38 @@ export default {
 .nav-bar {
   align-items: center;
   display: flex;
-  justify-content: space-between;
-  padding: $gutter-width;
+  height: 40px;
+  justify-content: center;
+  margin: $gutter-width;
   position: relative;
   z-index: 1;
 
-  .avatar {
-    margin-right: 10px;
+  a {
+    .title {
+      color: #000;
+      font-family: 'Rancho', cursive;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 0;
+
+      &:hover {
+        color: rgb(80, 80, 80);
+      }
+    }
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    .avatar {
+      margin-right: 10px;
+    }
   }
 }
 </style>
