@@ -166,7 +166,6 @@ export default {
       this.setLoading(true);
       this.attemptSignup(this.form)
         .then((res) => {
-          console.log(res.email);
           const emailUri = encodeURIComponent(res.email);
           this.$router.push(`/register/success?email=${emailUri}`);
         })

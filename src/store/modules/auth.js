@@ -167,11 +167,9 @@ export default {
           surname: credentials.surname,
         })
           .then((response) => {
-            console.log(`Confirmation email sent`, response);
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to signup', error);
             reject(error);
           });
       });
@@ -188,11 +186,9 @@ export default {
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.confirm(token)
           .then((response) => {
-            console.log('User has been confirmed');
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to confirm the user', error);
             reject(error);
           });
       });

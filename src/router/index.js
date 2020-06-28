@@ -29,6 +29,11 @@ const routes = [
     meta: { unauthOnly: true },
   },
   {
+    path: '/verify-email',
+    name: 'verifyEmail',
+    component: () => import('../views/VerifyEmail'),
+  },
+  {
     path: '/',
     name: 'about',
     component: () => import('../views/About'),
