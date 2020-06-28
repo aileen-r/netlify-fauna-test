@@ -1,4 +1,4 @@
-<template>
+<template functional>
   <div class="fullscreen-loader">
     <img alt="Loading..." class="spinner" src="@/assets/spinner.svg" />
   </div>
