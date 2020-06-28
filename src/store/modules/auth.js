@@ -18,8 +18,18 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
-    currentUserDisplayName: (state) =>
-      state.currentUser && state.currentUser.user_metadata.full_name,
+    currentUserDisplayName: (state) => {
+      if (state.currentUser) {
+        const firstName = state.currentUser.user_metadata.first_name;
+        const surname = state.currentUser.user_metadata.surname;
+        return [firstName, surname].join(' ');
+      }
+    },
+
+    // currentUserFirstName: (state) =>
+    //   state.currentUser && state.currentUser.user_metadata.first_name,
+
+    // currentUserSurname: (state) => state.currentUser && state.currentUser.user_metadata.surname,
 
     netlifyUserLoggedIn: (state) => !!state.GoTrueAuth.currentUser(),
 
