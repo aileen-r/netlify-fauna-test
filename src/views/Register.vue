@@ -2,9 +2,7 @@
   <div>
     <!-- TODO: write some more interesting flavour text here (see reddit) -->
     <h2>Register for an account</h2>
-    <b-alert variant="danger" :show="registerError"
-      >Oops, something went wrong! Please try again.</b-alert
-    >
+    <b-alert variant="danger" :show="!!registerError"> {{ registerError }}</b-alert>
     <b-form novalidate @submit="register">
       <b-form-row>
         <b-col>
@@ -105,7 +103,7 @@ export default {
         password: '',
         passwordConfirm: '',
       },
-      registerError: false,
+      registerError: '',
     };
   },
 
@@ -170,7 +168,19 @@ export default {
           this.$router.push(`/register/success?email=${emailUri}`);
         })
         .catch((error) => {
-          this.registerError = true;
+          if (error.data) {
+            this.registerError = error.data;
+          }
+          if (error.json) {
+            if (error.json['error_description']) {
+              this.registerError = error.json['error_description'];
+            } else {
+              this.registerError = error.json.msg;
+            }
+          }
+          if (!this.registerError) {
+            this.registerError = 'Oops, something went wrong! Please try again';
+          }
           // eslint-disable-next-line no-console
           console.error(error, 'Register error');
         })
