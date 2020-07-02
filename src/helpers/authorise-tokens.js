@@ -36,13 +36,13 @@ function detectTokens() {
 /**
  * Checks URL hash for `confirmation_token=` then extracts the token which proceeds.
  */
-function detectEmailConfirmationToken() {
+export function detectEmailConfirmationToken() {
   try {
     // split the hash where it detects `confirmation_token=`. The string which proceeds is the part which we want.
     const token = decodeURIComponent(document.location.hash).split('confirmation_token=')[1];
     return token;
   } catch (error) {
-    console.error('Something went wrong when trying to extract email confirmation email', error);
+    console.error('Something went wrong when trying to extract email confirmation token', error);
     return null;
   }
 }

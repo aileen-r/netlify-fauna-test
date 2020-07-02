@@ -17,10 +17,21 @@ const routes = [
     meta: { unauthOnly: true },
   },
   {
+    path: '/register/success',
+    name: 'registerSuccess',
+    component: () => import('../views/RegisterSuccess'),
+    meta: { unauthOnly: true },
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('../views/Register'),
     meta: { unauthOnly: true },
+  },
+  {
+    path: '/verify-email',
+    name: 'verifyEmail',
+    component: () => import('../views/VerifyEmail'),
   },
   {
     path: '/',
@@ -67,7 +78,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.authRequired);
-  const unauthOnly = to.matched.some(route => route.meta.unauthOnly);
+  const unauthOnly = to.matched.some((route) => route.meta.unauthOnly);
   const loggedIn = store.getters['auth/loggedIn'];
 
   if (unauthOnly && loggedIn) {

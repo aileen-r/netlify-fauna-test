@@ -18,8 +18,18 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
-    currentUserDisplayName: (state) =>
-      state.currentUser && state.currentUser.user_metadata.full_name,
+    currentUserDisplayName: (state) => {
+      if (state.currentUser) {
+        const firstName = state.currentUser.user_metadata.first_name;
+        const surname = state.currentUser.user_metadata.surname;
+        return [firstName, surname].join(' ');
+      }
+    },
+
+    // currentUserFirstName: (state) =>
+    //   state.currentUser && state.currentUser.user_metadata.first_name,
+
+    // currentUserSurname: (state) => state.currentUser && state.currentUser.user_metadata.surname,
 
     netlifyUserLoggedIn: (state) => !!state.GoTrueAuth.currentUser(),
 
@@ -153,14 +163,13 @@ export default {
       console.log(`Attempting signup for ${credentials.email}...`, credentials);
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.signup(credentials.email, credentials.password, {
-          full_name: credentials.name,
+          first_name: credentials.firstName,
+          surname: credentials.surname,
         })
           .then((response) => {
-            console.log(`Confirmation email sent`, response);
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to signup', error);
             reject(error);
           });
       });
@@ -177,11 +186,9 @@ export default {
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.confirm(token)
           .then((response) => {
-            console.log('User has been confirmed');
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to confirm the user', error);
             reject(error);
           });
       });

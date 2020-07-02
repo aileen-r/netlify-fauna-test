@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Log In</h1>
+    <h2>Log In</h2>
     <b-alert variant="danger" :show="!!loginError">{{ loginError }}</b-alert>
     <b-form novalidate @submit="login">
       <b-form-group label="Email address" label-for="login-email">

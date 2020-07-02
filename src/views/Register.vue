@@ -1,10 +1,8 @@
 <template>
   <div>
     <!-- TODO: write some more interesting flavour text here (see reddit) -->
-    <h1>Register for an account</h1>
-    <b-alert variant="danger" :show="registerError"
-      >Oops, something went wrong! Please try again.</b-alert
-    >
+    <h2>Register for an account</h2>
+    <b-alert variant="danger" :show="!!registerError"> {{ registerError }}</b-alert>
     <b-form novalidate @submit="register">
       <b-form-row>
         <b-col>
@@ -105,7 +103,7 @@ export default {
         password: '',
         passwordConfirm: '',
       },
-      registerError: false,
+      registerError: '',
     };
   },
 
@@ -156,6 +154,7 @@ export default {
 
   methods: {
     ...mapActions('app', ['setLoading']),
+    ...mapActions('auth', ['attemptSignup']),
 
     register(e) {
       e.preventDefault();
@@ -163,13 +162,25 @@ export default {
       this.$v.form.$touch();
       if (this.$v.form.$invalid) return;
       this.setLoading(true);
-      this.attemptSignup(this.crendentials)
-        .then((response) => {
-          // TODO
-          console.log(response);
+      this.attemptSignup(this.form)
+        .then((res) => {
+          const emailUri = encodeURIComponent(res.email);
+          this.$router.push(`/register/success?email=${emailUri}`);
         })
         .catch((error) => {
-          this.registerError = true;
+          if (error.data) {
+            this.registerError = error.data;
+          }
+          if (error.json) {
+            if (error.json['error_description']) {
+              this.registerError = error.json['error_description'];
+            } else {
+              this.registerError = error.json.msg;
+            }
+          }
+          if (!this.registerError) {
+            this.registerError = 'Oops, something went wrong! Please try again';
+          }
           // eslint-disable-next-line no-console
           console.error(error, 'Register error');
         })
