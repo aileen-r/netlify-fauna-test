@@ -54,6 +54,7 @@ export default {
       this.setLoading(true);
       e.preventDefault();
       const profile_picture = this.imageFile ? await this.uploadFileToS3(this.imageFile) : null;
+      // clear any null or undefined variables before update
       this.updateUserAccount({ data: { profile_picture } })
         .then((res) => {
           console.log(res);
@@ -68,7 +69,8 @@ export default {
 
     async uploadFileToS3(file) {
       const userId = this.userId;
-      const fileName = `profile-picture_${userId}`;
+      const dateString = new Date().toISOString();
+      const fileName = `profile-picture_${userId}_${dateString}`;
       const fileTypeSuffix = '.' + file.type.split('/')[1];
       const fileKey = 'users/' + fileName + fileTypeSuffix;
       try {

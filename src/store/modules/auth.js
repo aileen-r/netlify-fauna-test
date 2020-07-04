@@ -325,12 +325,14 @@ export default {
     },
 
     updateUserAccount({ state, commit }, userData) {
-      //TODO : fix bug in this action - https://github.com/chiubaca/vue-netlify-fauna-starter-kit/issues/12
       return new Promise((resolve, reject) => {
-        const user = state.GoTrueAuth.currentUser();
-        user
+        const goTrueAuth = state.GoTrueAuth;
+        commit('SET_GOTRUE', null);
+        goTrueAuth
+          .currentUser()
           .update(userData)
           .then((response) => {
+            commit('SET_GOTRUE', goTrueAuth);
             commit('SET_CURRENT_USER', response);
             resolve(response);
           })
