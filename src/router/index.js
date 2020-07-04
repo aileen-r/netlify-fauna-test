@@ -34,7 +34,13 @@ const routes = [
     component: () => import('../views/VerifyEmail'),
   },
   {
-    path: '/',
+    path: '/user/settings',
+    name: 'userSettings',
+    component: () => import('../views/UserSettings'),
+    meta: { authRequired: true },
+  },
+  {
+    path: '/about',
     name: 'about',
     component: () => import('../views/About'),
   },
@@ -91,7 +97,7 @@ router.beforeEach((to, from, next) => {
     return next();
   }
   console.warn('Page restricted. You need to login');
-  next({ name: 'home', query: { redirectFrom: to.fullPath } });
+  next({ name: 'login', query: { redirectFrom: to.fullPath } });
 });
 
 export default router;
