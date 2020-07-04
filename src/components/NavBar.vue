@@ -1,58 +1,101 @@
 <template>
-  <nav v-if="currentUser" id="nav-bar">
-    <div id="nav-items">
-      <router-link :to="{ name: 'home' }">🏠 Home</router-link>
-
-      <router-link :to="{ name: 'journals' }">📔 Your Journals</router-link>
-
-      <router-link id="profile-link" :to="{ name: 'profile' }">🆔 Profile</router-link>
-
-      <ThemeToggle />
+  <div class="nav-bar">
+    <transition name="fade" mode="out-in">
+      <b-link v-if="$route.path !== '/'" to="/">
+        <h1 class="title">52 Week Savings Challenge</h1>
+      </b-link>
+    </transition>
+    <div class="user-dropdown">
+      <b-dropdown v-if="currentUser" right variant="link">
+        <template v-slot:button-content>
+          <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
+          >{{ currentUserDisplayName }}
+        </template>
+        <b-dropdown-item disabled>Settings</b-dropdown-item>
+        <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
+      </b-dropdown>
+      <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
+        >Log In</b-button
+      >
     </div>
-  </nav>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import ThemeToggle from './ThemeToggle.vue';
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
-  components: {
-    ThemeToggle,
-  },
+  name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser']),
+    ...mapGetters('auth', ['currentUser', 'currentUserDisplayName']),
+    initials() {
+      return (
+        this.currentUserDisplayName &&
+        this.currentUserDisplayName
+          .split(' ')
+          .map((x) => x[0].toUpperCase())
+          .join('')
+      );
+    },
+  },
+  methods: {
+    ...mapActions('app', ['setLoading']),
+    ...mapActions('auth', ['attemptLogout']),
+    logout() {
+      this.setLoading(true);
+      this.attemptLogout()
+        .then(() => {
+          this.$router.push('/');
+        })
+        .catch((error) => {
+          location.reload();
+          // eslint-disable-next-line no-console
+          console.error('problem with logout', error);
+        })
+        .finally(() => {
+          this.setLoading(false);
+        });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-nav#nav-bar {
-  background-color: var(--app-secondary-background-color);
-}
-nav#nav-bar #nav-items {
-  display: flex;
-  flex-flow: wrap;
-  text-decoration: none;
+.nav-bar {
   align-items: center;
-  text-align: center;
-  justify-content: space-evenly;
-  margin: 30px 10px 0 10px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  margin: $gutter-width;
+  position: relative;
+  z-index: 1;
+
   a {
-    border-bottom: solid 3px rgba(255, 255, 255, 0);
-    padding-bottom: 5px;
-    text-decoration: none;
-    font-weight: bold;
+    .title {
+      color: #000;
+      font-family: 'Rancho', cursive;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 0;
+
+      &:hover {
+        color: rgb(80, 80, 80);
+      }
+    }
+
+    &:hover {
+      text-decoration: none;
+    }
   }
-  a:hover {
-    border-bottom: solid 3px var(--primary);
-    padding-bottom: 5px;
+
+  .user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    .avatar {
+      margin-right: 10px;
+    }
   }
-  a#profile-link {
-    text-transform: capitalize;
-  }
-}
-nav#nav-bar #nav-items > a,
-div {
-  margin: 20px;
 }
 </style>

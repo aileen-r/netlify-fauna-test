@@ -18,6 +18,19 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
+    currentUserDisplayName: (state) => {
+      if (state.currentUser) {
+        const firstName = state.currentUser.user_metadata.first_name;
+        const surname = state.currentUser.user_metadata.surname;
+        return [firstName, surname].join(' ');
+      }
+    },
+
+    // currentUserFirstName: (state) =>
+    //   state.currentUser && state.currentUser.user_metadata.first_name,
+
+    // currentUserSurname: (state) => state.currentUser && state.currentUser.user_metadata.surname,
+
     netlifyUserLoggedIn: (state) => !!state.GoTrueAuth.currentUser(),
 
     currentNetlifyUser: (state) => state.GoTrueAuth.currentUser(),
@@ -83,7 +96,6 @@ export default {
             commit('SET_CURRENT_USER', response);
           })
           .catch((error) => {
-            console.log('An error occurred signing up', error);
             reject(error);
           });
       });
@@ -151,14 +163,13 @@ export default {
       console.log(`Attempting signup for ${credentials.email}...`, credentials);
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.signup(credentials.email, credentials.password, {
-          full_name: credentials.name,
+          first_name: credentials.firstName,
+          surname: credentials.surname,
         })
           .then((response) => {
-            console.log(`Confirmation email sent`, response);
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to signup', error);
             reject(error);
           });
       });
@@ -175,11 +186,9 @@ export default {
       return new Promise((resolve, reject) => {
         state.GoTrueAuth.confirm(token)
           .then((response) => {
-            console.log('User has been confirmed');
             resolve(response);
           })
           .catch((error) => {
-            console.log('An error occurred trying to confirm the user', error);
             reject(error);
           });
       });
@@ -192,17 +201,17 @@ export default {
      */
     attemptLogout({ state, commit }) {
       return new Promise((resolve, reject) => {
-        state.GoTrueAuth.currentUser()
+        // calling .currentUser() mutates the GoTrueAuth object
+        const goTrueAuth = state.GoTrueAuth;
+        commit('SET_CURRENT_USER', null);
+        goTrueAuth
+          .currentUser()
           .logout()
           .then((resp) => {
-            console.log('User logged out', resp);
-            alert('you have logged out');
-            commit('SET_CURRENT_USER', null);
+            console.log('User logged out');
             resolve(resp);
           })
           .catch((error) => {
-            console.error('Could not log user out', error);
-            commit('SET_CURRENT_USER', null);
             reject(error);
           });
       });
@@ -235,7 +244,7 @@ export default {
 
     /**
      * Initialises a GoTrue instance. This method also checks if user is in a local environment  based on the URL.
-     * this updates the `app/SET_DEV_ENV` flag. This facilitates a zero-config setup as a developer can input their
+     * this updates the `env/SET_DEV_ENV` flag. This facilitates a zero-config setup as a developer can input their
      * netlify URL in the UI (see the the `SetNetlifyURL.vue` component). Inspired from the official Netlify
      * Identity widget.
      * @param {*} store - vuex store object
@@ -258,23 +267,23 @@ export default {
       // TODO : Move this logic into a separate action.
       if (hostName.match(IPv4Pattern) || hostName === 'localhost') {
         console.log('Looks like your in a dev environment', hostName);
-        commit('app/SET_DEV_ENV', true, { root: true });
+        commit('env/SET_DEV_ENV', true, { root: true });
 
         console.log(
           'Initialising Go True client with',
-          `https://${rootGetters['app/siteURL']}/.netlify/identity`
+          `https://${rootGetters['env/siteURL']}/.netlify/identity`
         );
         commit(
           'SET_GOTRUE',
-          initNewGoTrue(`https://${rootGetters['app/siteURL']}/.netlify/identity`)
+          initNewGoTrue(`https://${rootGetters['env/siteURL']}/.netlify/identity`)
         );
 
         this.subscribe((mutation) => {
-          if (mutation.type === 'app/SET_SITE_URL') {
-            console.log('Re-initialising Go True client with', rootGetters['app/siteURL']);
+          if (mutation.type === 'env/SET_SITE_URL') {
+            console.log('Re-initialising Go True client with', rootGetters['env/siteURL']);
             commit(
               'SET_GOTRUE',
-              initNewGoTrue(`https://${rootGetters['app/siteURL']}/.netlify/identity`)
+              initNewGoTrue(`https://${rootGetters['env/siteURL']}/.netlify/identity`)
             );
           }
         });

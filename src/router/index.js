@@ -11,27 +11,62 @@ const routes = [
     component: () => import('../views/Home'),
   },
   {
-    path: '/journals',
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login'),
+    meta: { unauthOnly: true },
+  },
+  {
+    path: '/register/success',
+    name: 'registerSuccess',
+    component: () => import('../views/RegisterSuccess'),
+    meta: { unauthOnly: true },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('../views/Register'),
+    meta: { unauthOnly: true },
+  },
+  {
+    path: '/verify-email',
+    name: 'verifyEmail',
+    component: () => import('../views/VerifyEmail'),
+  },
+  {
+    path: '/',
+    name: 'about',
+    component: () => import('../views/About'),
+  },
+  {
+    path: '/old/',
+    name: 'oldHome',
+    component: () => import('../views/OldHome'),
+    meta: { layout: 'old' },
+  },
+  {
+    path: '/old/journals',
     name: 'journals',
-    component: () => import('../views/AllJournals'),
-    meta: { authRequired: true },
+    component: () => import('../views/OldAllJournals'),
+    meta: { authRequired: true, layout: 'old' },
   },
   {
-    path: '/journals/:id/posts',
+    path: '/old/journals/:id/posts',
     name: 'posts',
-    component: () => import('../views/AllPosts'),
-    meta: { authRequired: true },
+    component: () => import('../views/OldAllPosts'),
+    meta: { authRequired: true, layout: 'old' },
   },
   {
-    path: '/profile',
+    path: '/old/profile',
     name: 'profile',
-    component: () => import('../views/Profile'),
-    meta: { authRequired: true },
+    component: () => import('../views/OldProfile'),
+    meta: { authRequired: true, layout: 'old' },
   },
   {
-    path: '/recover',
+    path: '/old/recover',
     name: 'recover',
-    component: () => import('../views/RecoverAccount'),
+    component: () => import('../views/OldRecoverAccount'),
+    meta: { layout: 'old' },
   },
 ];
 
@@ -43,16 +78,19 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const authRequired = to.matched.some((route) => route.meta.authRequired);
-  // If the route doesnt have a `meta.authRequired` property go on ahead!
+  const unauthOnly = to.matched.some((route) => route.meta.unauthOnly);
+  const loggedIn = store.getters['auth/loggedIn'];
+
+  if (unauthOnly && loggedIn) {
+    return next({ name: 'home', query: { redirectFrom: to.fullPath } });
+  }
   if (!authRequired) {
     return next();
   }
-  // If we go this far then it must have the `meta.authRequired`. But is there is a user logged in? If so, then go right on ahead!
-  if (store.getters['auth/loggedIn']) {
+  if (loggedIn) {
     return next();
   }
-  // The page requested is both secured and there is no logged in user detected. Sorry mate. No entry!
-  console.warn('Page restricted, you need to login');
+  console.warn('Page restricted. You need to login');
   next({ name: 'home', query: { redirectFrom: to.fullPath } });
 });
 

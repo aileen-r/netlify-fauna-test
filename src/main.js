@@ -3,6 +3,19 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import attemptToAuthoriseTokens from './helpers/authorise-tokens';
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue';
+
+import Default from './layouts/Default';
+import Old from './layouts/Old';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+Vue.component('default-layout', Default);
+Vue.component('old-layout', Old);
+
+Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
 
 Vue.config.productionTip = false;
 
@@ -15,8 +28,6 @@ new Vue({
 store.dispatch('auth/initAuth');
 
 attemptToAuthoriseTokens();
-
-Vue.config.productionTip = false;
 
 // Register a global custom directive called `v-focus`
 Vue.directive('focus', {

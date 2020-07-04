@@ -84,7 +84,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('app', ['isDevEnvironment']),
+    ...mapGetters('env', ['isDevEnvironment']),
     passwordType() {
       return this.hidePassword ? 'password' : 'text';
     },

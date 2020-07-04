@@ -4,13 +4,26 @@ export default {
 
   state() {
     return {
+      isDevEnvironment: false,
       loading: false,
+      siteURL: null,
     };
   },
 
+  getters: {
+    isDevEnvironment: (state) => state.isDevEnvironment,
+    siteURL: (state) => state.siteURL,
+  },
+
   mutations: {
+    SET_DEV_ENV(state, value) {
+      state.isDevEnvironment = value;
+    },
     SET_LOADING(state, value) {
       state.loading = value;
+    },
+    SET_SITE_URL(state, value) {
+      state.siteURL = value;
     },
   },
 

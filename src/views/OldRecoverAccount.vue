@@ -26,7 +26,7 @@
 <script>
 import { mapActions } from 'vuex';
 export default {
-  name: 'RecoverAccount',
+  name: 'OldRecoverAccount',
   data() {
     return {
       crendentials: {
