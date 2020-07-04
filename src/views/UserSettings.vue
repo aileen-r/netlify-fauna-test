@@ -21,7 +21,9 @@
 </template>
 
 <script>
+import AWS from 'aws-sdk';
 import s3, { bucketName, bucketRegion } from '@/helpers/init-aws';
+import { mapActions } from 'vuex';
 export default {
   name: 'UserSettings',
 
@@ -47,6 +49,8 @@ export default {
   },
 
   methods: {
+    ...mapActions('app', ['setLoading']),
+
     getAllBucketObjects() {
       s3.listObjects({ Delimiter: '/' })
         .promise()
@@ -71,7 +75,31 @@ export default {
     },
 
     uploadFileToS3(file) {
-      console.log(file);
+      this.setLoading(true);
+      const userId = '3508137583';
+      const fileName = `profile-picture_${userId}`;
+      const fileTypeSuffix = '.' + file.type.split('/')[1];
+      const fileKey = 'users/' + fileName + fileTypeSuffix;
+      console.log(fileTypeSuffix);
+      new AWS.S3.ManagedUpload({
+        params: {
+          Bucket: bucketName,
+          Key: fileKey,
+          Body: file,
+          ACL: 'public-read',
+          ContentType: file.type,
+        },
+      })
+        .promise()
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((err) => {
+          console.error('Error uploading to s3.', err.message);
+        })
+        .finally(() => {
+          this.setLoading(false);
+        });
     },
   },
 };
