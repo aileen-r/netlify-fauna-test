@@ -2,19 +2,28 @@
   <div>
     <h2>User Settings</h2>
     <b-form novalidate @submit="updateUser">
-      <b-form-group label="Profile Picture" label-for="profile-picture">
-        <b-form-file
-          id="profile-picture"
-          v-model="imageFile"
-          :state="isFileValid"
-          accept="image/*"
-          placeholder="Choose a file or drop it here..."
-          drop-placeholder="Drop file here..."
-        />
-        <b-form-invalid-feedback :state="isFileValid">
-          Please select an image file type.
-        </b-form-invalid-feedback>
-      </b-form-group>
+      <b-row>
+        <b-col>
+          <b-form-group label="Profile Picture" label-for="profile-picture">
+            <b-avatar v-if="userProfilePicture" size="15rem" :src="userProfilePicture" />
+            <b-avatar v-else size="15rem" :text="initials" variant="primary" />
+            <b-form-file
+              id="profile-picture"
+              v-model="imageFile"
+              :state="isFileValid"
+              accept="image/*"
+              placeholder="Choose a file or drop it here..."
+              drop-placeholder="Drop file here..."
+            />
+            <b-form-invalid-feedback :state="isFileValid">
+              Please select an image file type.
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          The rest of the form...
+        </b-col>
+      </b-row>
       <b-button type="submit" variant="primary">Save Changes</b-button>
     </b-form>
   </div>
@@ -35,7 +44,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('auth', ['userId']),
+    ...mapGetters('auth', ['userId', 'userProfilePicture']),
 
     isFileValid() {
       if (this.imageFile) {
