@@ -11,7 +11,7 @@
           <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
           >{{ currentUserDisplayName }}
         </template>
-        <b-dropdown-item disabled>Settings</b-dropdown-item>
+        <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
         <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
       </b-dropdown>
       <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
