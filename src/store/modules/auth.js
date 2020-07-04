@@ -30,6 +30,10 @@ export default {
       return state.currentUser && state.currentUser.id;
     },
 
+    userProfilePicture: (state) => {
+      return state.currentUser && state.currentUser.user_metadata.profile_picture;
+    },
+
     // currentUserFirstName: (state) =>
     //   state.currentUser && state.currentUser.user_metadata.first_name,
 
@@ -320,14 +324,14 @@ export default {
       });
     },
 
-    updateUserAccount({ state }, userData) {
+    updateUserAccount({ state, commit }, userData) {
       //TODO : fix bug in this action - https://github.com/chiubaca/vue-netlify-fauna-starter-kit/issues/12
       return new Promise((resolve, reject) => {
         const user = state.GoTrueAuth.currentUser();
         user
           .update(userData)
           .then((response) => {
-            console.log('Updated user account details');
+            commit('SET_CURRENT_USER', response);
             resolve(response);
           })
           .catch((error) => {

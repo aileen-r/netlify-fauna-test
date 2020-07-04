@@ -21,8 +21,9 @@
 </template>
 
 <script>
-import s3, { bucketName, bucketRegion } from '@/helpers/init-aws';
+import s3, { bucketName } from '@/helpers/init-aws';
 import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: 'UserSettings',
 
@@ -45,59 +46,46 @@ export default {
     },
   },
 
-  mounted() {
-    this.getAllBucketObjects();
-  },
-
   methods: {
     ...mapActions('app', ['setLoading']),
+    ...mapActions('auth', ['updateUserAccount']),
 
-    getAllBucketObjects() {
-      s3.listObjects({ Delimiter: '/' })
-        .promise()
-        .then((data) => {
-          const bucketUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/`;
-          this.photos = data.Contents.map((photo) => {
-            const photoKey = photo.Key;
-            const photoUrl = bucketUrl + encodeURIComponent(photoKey);
-            return photoUrl;
-          });
-        })
-        .catch((err) => {
-          console.error('Error fetching s3 objects.', err.message);
-        });
-    },
-
-    updateUser(e) {
-      e.preventDefault();
-      if (this.imageFile) {
-        this.uploadFileToS3(this.imageFile);
-      }
-    },
-
-    uploadFileToS3(file) {
+    async updateUser(e) {
       this.setLoading(true);
-      const userId = this.userId;
-      const fileName = `profile-picture_${userId}`;
-      const fileTypeSuffix = '.' + file.type.split('/')[1];
-      const fileKey = 'users/' + fileName + fileTypeSuffix;
-      s3.upload({
-        Bucket: bucketName,
-        Key: fileKey,
-        Body: file,
-        ACL: 'public-read',
-        ContentType: file.type,
-      })
-        .promise()
-        .then((data) => {
-          console.log(data);
+      e.preventDefault();
+      const profile_picture = this.imageFile ? await this.uploadFileToS3(this.imageFile) : null;
+      this.updateUserAccount({ data: { profile_picture } })
+        .then((res) => {
+          console.log(res);
         })
         .catch((err) => {
-          console.error('Error uploading to s3.', err.message);
+          console.error('Error updating user.', err);
         })
         .finally(() => {
           this.setLoading(false);
         });
+    },
+
+    async uploadFileToS3(file) {
+      const userId = this.userId;
+      const fileName = `profile-picture_${userId}`;
+      const fileTypeSuffix = '.' + file.type.split('/')[1];
+      const fileKey = 'users/' + fileName + fileTypeSuffix;
+      try {
+        const data = await s3
+          .upload({
+            Bucket: bucketName,
+            Key: fileKey,
+            Body: file,
+            ACL: 'public-read',
+            ContentType: file.type,
+          })
+          .promise();
+        return data.Location;
+      } catch (err) {
+        console.error('Error uploading to s3.', err.message);
+        return null;
+      }
     },
   },
 };
