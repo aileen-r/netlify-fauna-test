@@ -5,6 +5,7 @@
         <h2 class="alert-heading">Verification Error</h2>
         <p>
           We are unable to verify your email address at this time. Please
+          <!-- TODO: add redirect param to verify email -->
           <b-link to="/login" class="alert-link"
             >click here to login and verify your email address</b-link
           >.
@@ -16,7 +17,6 @@
         <h2 class="alert-heading">Email Verified</h2>
         <p>
           Registration is complete. You can now
-          <!-- TODO: add redirect param to verify email -->
           <b-link to="/login" class="alert-link">log in</b-link>.
         </p>
       </b-alert>
