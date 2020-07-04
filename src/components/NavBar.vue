@@ -9,7 +9,7 @@
       <b-dropdown v-if="currentUser" right variant="link">
         <template v-slot:button-content>
           <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
-          >{{ currentUserDisplayName }}
+          >{{ userDisplayName }}
         </template>
         <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
         <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
@@ -27,11 +27,11 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'currentUserDisplayName']),
+    ...mapGetters('auth', ['currentUser', 'userDisplayName']),
     initials() {
       return (
-        this.currentUserDisplayName &&
-        this.currentUserDisplayName
+        this.userDisplayName &&
+        this.userDisplayName
           .split(' ')
           .map((x) => x[0].toUpperCase())
           .join('')

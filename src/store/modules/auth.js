@@ -18,12 +18,16 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
-    currentUserDisplayName: (state) => {
+    userDisplayName: (state) => {
       if (state.currentUser) {
         const firstName = state.currentUser.user_metadata.first_name;
         const surname = state.currentUser.user_metadata.surname;
         return [firstName, surname].join(' ');
       }
+    },
+
+    userId: (state) => {
+      return state.currentUser && state.currentUser.id;
     },
 
     // currentUserFirstName: (state) =>
