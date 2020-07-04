@@ -27,7 +27,7 @@ new Vue({
 
 store.dispatch('auth/initAuth');
 
-attemptToAuthoriseTokens();
+// attemptToAuthoriseTokens();
 
 // Register a global custom directive called `v-focus`
 Vue.directive('focus', {
