@@ -8,10 +8,12 @@
     <div class="user-dropdown">
       <b-dropdown v-if="currentUser" right variant="link">
         <template v-slot:button-content>
-          <span class="avatar"><b-avatar :text="initials" variant="primary" /></span
-          >{{ currentUserDisplayName }}
+          <span class="avatar"
+            ><img v-if="avatarImage" :src="avatarImage" variant="primary" />
+            <b-avatar v-else :text="userInitials" variant="primary" /></span
+          >{{ userDisplayName }}
         </template>
-        <b-dropdown-item disabled>Settings</b-dropdown-item>
+        <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
         <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
       </b-dropdown>
       <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
@@ -27,17 +29,13 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'currentUserDisplayName']),
-    initials() {
-      return (
-        this.currentUserDisplayName &&
-        this.currentUserDisplayName
-          .split(' ')
-          .map((x) => x[0].toUpperCase())
-          .join('')
-      );
+    ...mapGetters('auth', ['currentUser', 'userDisplayName', 'userInitials', 'userProfilePicture']),
+
+    avatarImage() {
+      return this.userProfilePicture('80x80');
     },
   },
+
   methods: {
     ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['attemptLogout']),
@@ -95,6 +93,13 @@ export default {
 
     .avatar {
       margin-right: 10px;
+
+      img {
+        border-radius: 50%;
+        height: 40px;
+        object-fit: cover;
+        width: 40px;
+      }
     }
   }
 }

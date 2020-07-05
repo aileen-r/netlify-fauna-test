@@ -3,6 +3,8 @@
  */
 import GoTrue from 'gotrue-js';
 
+const imageBaseUrl = 'https://d2oc7w7r0b0g98.cloudfront.net';
+
 export default {
   strict: false,
   namespaced: true,
@@ -18,12 +20,33 @@ export default {
 
     currentUser: (state) => state.currentUser,
 
-    currentUserDisplayName: (state) => {
+    userDisplayName: (state) => {
       if (state.currentUser) {
         const firstName = state.currentUser.user_metadata.first_name;
         const surname = state.currentUser.user_metadata.surname;
         return [firstName, surname].join(' ');
       }
+    },
+
+    userInitials: (state) => {
+      if (state.currentUser) {
+        const firstName = state.currentUser.user_metadata.first_name;
+        const surname = state.currentUser.user_metadata.surname;
+        return [firstName[0].toUpperCase(), surname[0].toUpperCase()].join('');
+      }
+    },
+
+    userId: (state) => {
+      return state.currentUser && state.currentUser.id;
+    },
+
+    userProfilePicture: (state) => {
+      return (size) => {
+        return (
+          state.currentUser &&
+          imageBaseUrl + '/fit-in/' + size + '/' + state.currentUser.user_metadata.profile_picture
+        );
+      };
     },
 
     // currentUserFirstName: (state) =>
@@ -316,14 +339,16 @@ export default {
       });
     },
 
-    updateUserAccount({ state }, userData) {
-      //TODO : fix bug in this action - https://github.com/chiubaca/vue-netlify-fauna-starter-kit/issues/12
+    updateUserAccount({ state, commit }, userData) {
       return new Promise((resolve, reject) => {
-        const user = state.GoTrueAuth.currentUser();
-        user
+        const goTrueAuth = state.GoTrueAuth;
+        commit('SET_GOTRUE', null);
+        goTrueAuth
+          .currentUser()
           .update(userData)
           .then((response) => {
-            console.log('Updated user account details');
+            commit('SET_GOTRUE', goTrueAuth);
+            commit('SET_CURRENT_USER', response);
             resolve(response);
           })
           .catch((error) => {

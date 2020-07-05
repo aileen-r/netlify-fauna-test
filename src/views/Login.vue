@@ -53,6 +53,7 @@ export default {
         password: '',
       },
       loginError: '',
+      redirect: '/',
     };
   },
 
@@ -64,6 +65,9 @@ export default {
   },
 
   mounted() {
+    if (this.$route.query && this.$route.query.redirectFrom) {
+      this.redirect = this.$route.query.redirectFrom;
+    }
     this.$refs.email.$el.focus();
   },
 
@@ -79,7 +83,7 @@ export default {
       this.setLoading(true);
       this.attemptLogin({ email: this.form.email, password: this.form.password })
         .then(() => {
-          this.$router.push('/');
+          this.$router.push(this.redirect);
         })
         .catch((error) => {
           // Wrapping in try/catch since I'm guessing at error response structure
