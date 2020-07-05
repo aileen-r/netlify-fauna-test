@@ -3,6 +3,8 @@
  */
 import GoTrue from 'gotrue-js';
 
+const imageBaseUrl = 'https://d2oc7w7r0b0g98.cloudfront.net';
+
 export default {
   strict: false,
   namespaced: true,
@@ -26,12 +28,25 @@ export default {
       }
     },
 
+    userInitials: (state) => {
+      if (state.currentUser) {
+        const firstName = state.currentUser.user_metadata.first_name;
+        const surname = state.currentUser.user_metadata.surname;
+        return [firstName[0].toUpperCase(), surname[0].toUpperCase()].join('');
+      }
+    },
+
     userId: (state) => {
       return state.currentUser && state.currentUser.id;
     },
 
     userProfilePicture: (state) => {
-      return state.currentUser && state.currentUser.user_metadata.profile_picture;
+      return (size) => {
+        return (
+          state.currentUser &&
+          imageBaseUrl + '/fit-in/' + size + '/' + state.currentUser.user_metadata.profile_picture
+        );
+      };
     },
 
     // currentUserFirstName: (state) =>

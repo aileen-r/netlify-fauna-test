@@ -9,8 +9,8 @@
       <b-dropdown v-if="currentUser" right variant="link">
         <template v-slot:button-content>
           <span class="avatar"
-            ><b-avatar v-if="userProfilePicture" :src="userProfilePicture" />
-            <b-avatar v-else :text="initials" variant="primary" /></span
+            ><img v-if="avatarImage" :src="avatarImage" variant="primary" />
+            <b-avatar v-else :text="userInitials" variant="primary" /></span
           >{{ userDisplayName }}
         </template>
         <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
@@ -29,16 +29,10 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'userDisplayName', 'userProfilePicture']),
+    ...mapGetters('auth', ['currentUser', 'userDisplayName', 'userInitials', 'userProfilePicture']),
 
-    initials() {
-      return (
-        this.userDisplayName &&
-        this.userDisplayName
-          .split(' ')
-          .map((x) => x[0].toUpperCase())
-          .join('')
-      );
+    avatarImage() {
+      return this.userProfilePicture('90x90');
     },
   },
 
@@ -99,6 +93,13 @@ export default {
 
     .avatar {
       margin-right: 10px;
+
+      img {
+        border-radius: 50%;
+        height: 45px;
+        object-fit: cover;
+        width: 45px;
+      }
     }
   }
 }

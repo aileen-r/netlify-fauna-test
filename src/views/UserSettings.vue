@@ -5,8 +5,8 @@
       <b-row>
         <b-col>
           <b-form-group label="Profile Picture" label-for="profile-picture">
-            <b-avatar v-if="userProfilePicture" size="15rem" :src="userProfilePicture" />
-            <b-avatar v-else size="15rem" :text="initials" variant="primary" />
+            <img v-if="avatarImage" :src="avatarImage" class="avatar" />
+            <b-avatar v-else size="15rem" :text="userInitials" variant="primary" />
             <b-form-file
               id="profile-picture"
               v-model="imageFile"
@@ -44,7 +44,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters('auth', ['userId', 'userProfilePicture']),
+    ...mapGetters('auth', ['userId', 'userInitials', 'userProfilePicture']),
+
+    avatarImage() {
+      return this.userProfilePicture('600x600');
+    },
 
     isFileValid() {
       if (this.imageFile) {
@@ -65,9 +69,9 @@ export default {
       const profile_picture = this.imageFile ? await this.uploadFileToS3(this.imageFile) : null;
       // clear any null or undefined variables before update
       this.updateUserAccount({ data: { profile_picture } })
-        .then((res) => {
-          console.log(res);
-        })
+        // .then((res) => {
+        //   console.log(res);
+        // })
         .catch((err) => {
           console.error('Error updating user.', err);
         })
@@ -92,7 +96,7 @@ export default {
             ContentType: file.type,
           })
           .promise();
-        return data.Location;
+        return data.key;
       } catch (err) {
         console.error('Error uploading to s3.', err.message);
         return null;
@@ -102,4 +106,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.avatar {
+  border-radius: 50%;
+  height: 300px;
+  margin-bottom: 20px;
+  object-fit: cover;
+  width: 300px;
+}
+</style>
