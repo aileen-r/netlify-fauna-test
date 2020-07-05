@@ -32,7 +32,7 @@ export default {
     ...mapGetters('auth', ['currentUser', 'userDisplayName', 'userInitials', 'userProfilePicture']),
 
     avatarImage() {
-      return this.userProfilePicture('90x90');
+      return this.userProfilePicture('80x80');
     },
   },
 
@@ -96,9 +96,9 @@ export default {
 
       img {
         border-radius: 50%;
-        height: 45px;
+        height: 40px;
         object-fit: cover;
-        width: 45px;
+        width: 40px;
       }
     }
   }
