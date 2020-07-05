@@ -10,8 +10,8 @@
         <template v-slot:button-content>
           <span class="avatar"
             ><img v-if="avatarImage" :src="avatarImage" variant="primary" />
-            <b-avatar v-else :text="userInitials" variant="primary" /></span
-          >{{ userDisplayName }}
+            <b-avatar v-else :text="userInitials" variant="primary"
+          /></span>
         </template>
         <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
         <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
@@ -29,7 +29,7 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'NavBar',
   computed: {
-    ...mapGetters('auth', ['currentUser', 'userDisplayName', 'userInitials', 'userProfilePicture']),
+    ...mapGetters('auth', ['currentUser', 'userInitials', 'userProfilePicture']),
 
     avatarImage() {
       return this.userProfilePicture('80x80');
@@ -89,10 +89,9 @@ export default {
   .user-dropdown {
     position: absolute;
     right: 0;
-    top: 0;
 
     .avatar {
-      margin-right: 10px;
+      margin-right: 5px;
 
       img {
         border-radius: 50%;
