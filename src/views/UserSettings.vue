@@ -24,7 +24,6 @@
           <b-form-group label="First Name" label-for="first-name">
             <b-form-input
               id="first-name"
-              ref="firstName"
               v-model.trim="$v.form.firstName.$model"
               :state="getFieldState('firstName')"
               type="text"
@@ -90,7 +89,6 @@ export default {
         email: '',
       },
       imageFile: null,
-      photos: [],
     };
   },
 
@@ -136,11 +134,25 @@ export default {
       this.setLoading(true);
       e.preventDefault();
       const profile_picture = this.imageFile ? await this.uploadFileToS3(this.imageFile) : null;
-      // clear any null or undefined variables before update
-      this.updateUserAccount({ data: { profile_picture } })
-        // .then((res) => {
-        //   console.log(res);
-        // })
+      const user = { data: {} };
+      if (this.currentUser.user_metadata.first_name !== this.form.firstName) {
+        user.data.first_name = this.form.firstName;
+      }
+      if (this.currentUser.user_metadata.surname !== this.form.surname) {
+        user.data.surname = this.form.surname;
+      }
+      if (profile_picture) user.data.profile_picture = profile_picture;
+      if (this.currentUser.email !== this.form.email) {
+        user.email = email;
+      }
+      if (!user.email && Object.keys(user.data).length === 0) {
+        this.setLoading(false);
+        return;
+      }
+      this.updateUserAccount(user)
+        .then(() => {
+          this.imageFile = null;
+        })
         .catch((err) => {
           console.error('Error updating user.', err);
         })
