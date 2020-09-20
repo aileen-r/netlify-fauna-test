@@ -1,26 +1,46 @@
 <template>
-  <div class="nav-bar">
+  <b-navbar
+    :class="{ 'logged-in': currentUser }"
+    class="nav-bar"
+    toggleable="md"
+    type="light"
+    variant="light"
+  >
+    <b-collapse v-if="currentUser" id="nav-collapse" is-nav>
+      <b-navbar-nav>
+        <b-nav-item to="/test">Test</b-nav-item>
+      </b-navbar-nav>
+    </b-collapse>
+
+    <b-navbar-toggle v-if="currentUser" target="nav-collapse"></b-navbar-toggle>
     <transition name="fade" mode="out-in">
-      <b-link v-if="$route.path !== '/'" to="/">
-        <h1 class="title">52 Week Savings Challenge</h1>
-      </b-link>
+      <div v-if="$route.path !== '/'" class="brand">
+        <b-navbar-brand to="/" center>
+          <h1 class="title">52 Week Savings Challenge</h1>
+        </b-navbar-brand>
+      </div>
     </transition>
-    <div class="user-dropdown">
-      <b-dropdown v-if="currentUser" right variant="link">
-        <template v-slot:button-content>
-          <span class="avatar"
-            ><img v-if="avatarImage" :src="avatarImage" variant="primary" />
-            <b-avatar v-else :text="userInitials" variant="primary"
-          /></span>
-        </template>
-        <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
-        <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
-      </b-dropdown>
-      <b-button v-else to="/login" :pressed="$route.path === '/login'" variant="link"
-        >Log In</b-button
-      >
-    </div>
-  </div>
+
+    <b-dropdown v-if="currentUser" class="user-dropdown" no-caret right variant="link">
+      <template v-slot:button-content>
+        <span class="avatar"
+          ><img v-if="avatarImage" :src="avatarImage" variant="primary" />
+          <b-avatar v-else :text="userInitials" variant="primary"
+        /></span>
+      </template>
+      <b-dropdown-item to="/user/settings">Settings</b-dropdown-item>
+      <b-dropdown-item @click="logout">Log Out</b-dropdown-item>
+    </b-dropdown>
+    <b-button
+      v-else
+      class="login"
+      to="/login"
+      :pressed="$route.path === '/login'"
+      right
+      variant="link"
+      >Log In</b-button
+    >
+  </b-navbar>
 </template>
 
 <script>
@@ -60,44 +80,75 @@ export default {
 
 <style lang="scss" scoped>
 .nav-bar {
-  align-items: center;
-  display: flex;
-  height: 40px;
-  justify-content: center;
-  margin: $gutter-width;
-  position: relative;
-  z-index: 1;
+  justify-content: space-between;
 
-  a {
-    .title {
-      color: #000;
-      font-family: 'Rancho', cursive;
-      font-size: 2em;
-      font-weight: bold;
-      margin-bottom: 0;
+  .brand {
+    left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+
+    a {
+      margin-right: 0;
+
+      .title {
+        color: #000;
+        font-family: 'Rancho', cursive;
+        font-size: 1em;
+        font-weight: bold;
+        margin-bottom: 0;
+
+        @include media-breakpoint-up(sm) {
+          font-size: 1.5em;
+        }
+
+        &:hover {
+          color: rgb(80, 80, 80);
+        }
+      }
 
       &:hover {
-        color: rgb(80, 80, 80);
+        text-decoration: none;
       }
-    }
-
-    &:hover {
-      text-decoration: none;
     }
   }
 
+  .navbar-collapse {
+    @include media-breakpoint-up(md) {
+      flex-basis: auto;
+      flex-grow: 0;
+    }
+  }
+
+  .navbar-collapse,
+  .navbar-toggler,
+  .login {
+    z-index: 1;
+  }
+
   .user-dropdown {
-    position: absolute;
-    right: 0;
-
     .avatar {
-      margin-right: 5px;
-
       img {
         border-radius: 50%;
         height: 40px;
         object-fit: cover;
         width: 40px;
+      }
+    }
+  }
+
+  .login {
+    margin-left: auto;
+  }
+
+  &.logged-in {
+    .brand {
+      bottom: 17px;
+
+      @include media-breakpoint-up(sm) {
+        bottom: 12px;
       }
     }
   }
