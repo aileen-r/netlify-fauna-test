@@ -21,7 +21,46 @@
           </b-form-group>
         </b-col>
         <b-col>
-          The rest of the form...
+          <b-form-group label="First Name" label-for="first-name">
+            <b-form-input
+              id="first-name"
+              v-model.trim="$v.form.firstName.$model"
+              :state="getFieldState('firstName')"
+              type="text"
+              placeholder="John"
+            />
+          </b-form-group>
+          <b-form-group label="Surname" label-for="surname">
+            <b-form-input
+              id="surname"
+              v-model.trim="$v.form.surname.$model"
+              :state="getFieldState('surname')"
+              type="text"
+              placeholder="Boyega"
+            />
+          </b-form-group>
+          <b-form-group
+            label="Email address"
+            label-for="email"
+            description="You'll need to verify your new email address when you change this."
+          >
+            <b-form-input
+              id="email"
+              v-model.trim="$v.form.email.$model"
+              :state="getFieldState('email')"
+              type="email"
+              placeholder="your-name@site.com"
+            />
+            <b-form-invalid-feedback :state="getFieldState('email')">
+              {{ 'Please enter a valid email address' }}
+            </b-form-invalid-feedback>
+          </b-form-group>
+          <b-form-group
+            label="Password"
+            description="We will send you an email with a link to reset your password."
+          >
+            <b-button variant="secondary" @click="resetPassword">Reset your password</b-button>
+          </b-form-group>
         </b-col>
       </b-row>
       <b-button type="submit" variant="primary">Save Changes</b-button>
@@ -32,19 +71,39 @@
 <script>
 import s3, { bucketName } from '@/helpers/init-aws';
 import { mapGetters, mapActions } from 'vuex';
+import { validationMixin } from 'vuelidate';
+import { email } from 'vuelidate/lib/validators';
+
+import formMixin from '@/mixins/formMixin';
 
 export default {
   name: 'UserSettings',
 
+  mixins: [validationMixin, formMixin],
+
   data() {
     return {
+      form: {
+        firstName: '',
+        surname: '',
+        email: '',
+      },
       imageFile: null,
-      photos: [],
     };
   },
 
+  validations: {
+    form: {
+      firstName: {},
+      surname: {},
+      email: {
+        email,
+      },
+    },
+  },
+
   computed: {
-    ...mapGetters('auth', ['userId', 'userInitials', 'userProfilePicture']),
+    ...mapGetters('auth', ['currentUser', 'userId', 'userInitials', 'userProfilePicture']),
 
     avatarImage() {
       return this.userProfilePicture('600x600');
@@ -59,20 +118,47 @@ export default {
     },
   },
 
+  mounted() {
+    this.form = {
+      firstName: this.currentUser.user_metadata.first_name,
+      surname: this.currentUser.user_metadata.surname,
+      email: this.currentUser.email,
+    };
+  },
+
   methods: {
     ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['updateUserAccount']),
+
+    resetPassword() {
+      console.log('TODO: reset password');
+    },
 
     async updateUser(e) {
       this.setLoading(true);
       e.preventDefault();
       const profile_picture = this.imageFile ? await this.uploadFileToS3(this.imageFile) : null;
-      // clear any null or undefined variables before update
-      this.updateUserAccount({ data: { profile_picture } })
-        // .then((res) => {
-        //   console.log(res);
-        // })
+      const user = { data: {} };
+      if (this.currentUser.user_metadata.first_name !== this.form.firstName) {
+        user.data.first_name = this.form.firstName;
+      }
+      if (this.currentUser.user_metadata.surname !== this.form.surname) {
+        user.data.surname = this.form.surname;
+      }
+      if (profile_picture) user.data.profile_picture = profile_picture;
+      if (this.currentUser.email !== this.form.email) {
+        user.email = this.form.email;
+      }
+      if (!user.email && Object.keys(user.data).length === 0) {
+        this.setLoading(false);
+        return;
+      }
+      this.updateUserAccount(user)
+        .then(() => {
+          this.imageFile = null;
+        })
         .catch((err) => {
+          // eslint-disable-next-line no-console
           console.error('Error updating user.', err);
         })
         .finally(() => {
@@ -98,6 +184,7 @@ export default {
           .promise();
         return data.key;
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error uploading to s3.', err.message);
         return null;
       }
