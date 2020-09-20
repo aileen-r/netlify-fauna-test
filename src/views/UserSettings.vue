@@ -59,7 +59,7 @@
             label="Password"
             description="We will send you an email with a link to reset your password."
           >
-            <b-button variant="secondary">Reset your password</b-button>
+            <b-button variant="secondary" @click="resetPassword">Reset your password</b-button>
           </b-form-group>
         </b-col>
       </b-row>
@@ -130,6 +130,10 @@ export default {
     ...mapActions('app', ['setLoading']),
     ...mapActions('auth', ['updateUserAccount']),
 
+    resetPassword() {
+      console.log('TODO: reset password');
+    },
+
     async updateUser(e) {
       this.setLoading(true);
       e.preventDefault();
@@ -143,7 +147,7 @@ export default {
       }
       if (profile_picture) user.data.profile_picture = profile_picture;
       if (this.currentUser.email !== this.form.email) {
-        user.email = email;
+        user.email = this.form.email;
       }
       if (!user.email && Object.keys(user.data).length === 0) {
         this.setLoading(false);
@@ -154,6 +158,7 @@ export default {
           this.imageFile = null;
         })
         .catch((err) => {
+          // eslint-disable-next-line no-console
           console.error('Error updating user.', err);
         })
         .finally(() => {
@@ -179,6 +184,7 @@ export default {
           .promise();
         return data.key;
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error uploading to s3.', err.message);
         return null;
       }

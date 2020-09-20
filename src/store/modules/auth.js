@@ -44,6 +44,7 @@ export default {
       return (size) => {
         return (
           state.currentUser &&
+          state.currentUser.user_metadata.profile_picture &&
           imageBaseUrl + '/fit-in/' + size + '/' + state.currentUser.user_metadata.profile_picture
         );
       };
